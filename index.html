@@ -1,0 +1,664 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Daily Reset</title>
+<meta name="description" content="Morning, evening and ball plus band routines for neck, back, hips, legs and feet.">
+<meta name="theme-color" content="#0c0d16">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Daily Reset">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anybody:wdth,wght@50..150,500..900&family=Figtree:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap">
+<style>
+/* Layout: phone-first vertical feed. One full-screen card per exercise, snap scrolling like reels, card tint = body area. */
+:root{
+  --bg:#0c0d16; --bg2:#161827; --fg:#f2f1f8; --muted:#a4a6bf; --line:#2a2d44; --chip:rgba(255,255,255,.08); --scrim:rgba(5,6,12,.62); --on-hue:#0c0d16;
+  --neck:#a493ff; --upback:#5cb4ff; --lowback:#ff8466; --hips:#ff6bb0; --legs:#ffbb4d; --feet:#7ddc95;
+  --f-display:"Anybody", "Arial Narrow", system-ui, sans-serif;
+  --f-body:"Figtree", "Segoe UI", system-ui, sans-serif;
+  --f-mono:"IBM Plex Mono", ui-monospace, Menlo, monospace;
+  color-scheme:dark;
+}
+@media (prefers-color-scheme: light){:root:not([data-theme="dark"]){
+  --bg:#f4f3fa; --bg2:#ffffff; --fg:#17182b; --muted:#5e6079; --line:#d9d8e6; --chip:rgba(23,24,43,.06); --scrim:rgba(23,24,43,.35); --on-hue:#ffffff;
+  --neck:#5a47d9; --upback:#1767c7; --lowback:#c9472a; --hips:#bc2d70; --legs:#a06300; --feet:#22804a; color-scheme:light}}
+:root[data-theme="light"]{
+  --bg:#f4f3fa; --bg2:#ffffff; --fg:#17182b; --muted:#5e6079; --line:#d9d8e6; --chip:rgba(23,24,43,.06); --scrim:rgba(23,24,43,.35); --on-hue:#ffffff;
+  --neck:#5a47d9; --upback:#1767c7; --lowback:#c9472a; --hips:#bc2d70; --legs:#a06300; --feet:#22804a; color-scheme:light}
+
+*{box-sizing:border-box}
+html,body{height:100%}
+html{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);background:var(--bg)}
+[hidden]{display:none!important}
+img{max-width:100%}
+.app{-webkit-user-select:none;user-select:none}
+.how,.cues,.lede,.tip{-webkit-user-select:text;user-select:text}
+body{margin:0;background:var(--bg);color:var(--fg);font:16px/1.45 var(--f-body);overflow:hidden;-webkit-font-smoothing:antialiased;-webkit-tap-highlight-color:transparent}
+button{font:inherit;color:inherit;cursor:pointer}
+button:focus-visible,a:focus-visible{outline:2px solid var(--fg);outline-offset:3px}
+.app{position:relative;height:100%;max-width:520px;margin:0 auto;overflow:hidden;background:var(--bg)}
+@media (min-width:560px){.app{border-inline:1px solid var(--line)}}
+
+/* top bar */
+.top{position:absolute;inset:0 0 auto 0;z-index:20;padding:12px 16px 22px;background:linear-gradient(var(--bg) 58%,transparent);pointer-events:none}
+.top > *{pointer-events:auto}
+.row{display:flex;align-items:center;gap:8px}
+.brand{font:800 15px/1 var(--f-display);font-variation-settings:"wdth" 125;letter-spacing:.02em;text-transform:uppercase;margin-right:auto}
+.ibtn{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--line);background:var(--chip);border-radius:999px;padding:7px 12px;font-size:13px;font-weight:600}
+.ibtn svg{width:15px;height:15px;stroke:currentColor;fill:none;stroke-width:2}
+.seg{display:grid;grid-template-columns:1fr 1fr 1.15fr;gap:4px;margin-top:12px;background:var(--chip);border:1px solid var(--line);border-radius:12px;padding:4px}
+.seg button{border:0;background:none;border-radius:9px;padding:9px 6px;font-weight:700;font-size:14px;color:var(--muted);display:flex;justify-content:center;align-items:center;gap:6px;transition:background .2s,color .2s}
+.seg button[aria-pressed="true"]{background:var(--fg);color:var(--bg)}
+.seg .ck{width:16px;height:16px;border-radius:50%;background:var(--feet);color:var(--on-hue);font-size:10px;display:inline-grid;place-items:center}
+.prog{display:flex;align-items:center;gap:10px;margin-top:10px;font:600 12px var(--f-mono);color:var(--muted);font-variant-numeric:tabular-nums}
+.prog .bar{flex:1;height:4px;border-radius:2px;background:var(--line);overflow:hidden}
+.prog .bar i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--neck),var(--upback),var(--lowback),var(--hips),var(--legs),var(--feet));transition:width .4s ease}
+
+/* feed */
+#feed{height:100%;overflow-y:auto;scroll-snap-type:y mandatory;overscroll-behavior:contain;scrollbar-width:none}
+#feed::-webkit-scrollbar{display:none}
+.card{position:relative;min-height:100%;scroll-snap-align:start;scroll-snap-stop:always;display:flex;flex-direction:column;justify-content:flex-end;overflow:hidden;touch-action:manipulation;
+  background:var(--bg);
+  background:radial-gradient(110% 60% at 90% 8%,color-mix(in oklab,var(--h) 40%,transparent),transparent 62%),linear-gradient(180deg,color-mix(in oklab,var(--h) 14%,var(--bg)),var(--bg) 78%)}
+.big{position:absolute;top:146px;left:14px;right:34px;margin:0;font:900 clamp(70px,23vw,132px)/.84 var(--f-display);font-variation-settings:"wdth" 150;letter-spacing:-.02em;white-space:pre-line;color:color-mix(in oklab,var(--h) 24%,transparent);user-select:none;pointer-events:none;transition:transform .7s cubic-bezier(.2,.8,.2,1)}
+.card.is-active .big{transform:translateY(-10px)}
+.in{position:relative;z-index:1;padding:150px 44px 22px 18px;display:flex;flex-direction:column;gap:14px}
+.kick{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+.chip{font:600 12px/1 var(--f-mono);padding:6px 9px;border-radius:999px;background:var(--chip);border:1px solid var(--line);color:var(--fg);display:inline-flex;align-items:center;gap:6px;font-variant-numeric:tabular-nums}
+.chip .d{width:8px;height:8px;border-radius:50%;background:var(--h)}
+.chip.gear{background:transparent;border-style:dashed;color:var(--h)}
+.tip{font-size:14px;color:var(--muted);margin:0;max-width:44ch}
+.tip b{color:var(--fg)}
+.chip.donechip{background:var(--h);color:var(--on-hue);border-color:transparent;display:none}
+.card.is-done .chip.donechip{display:inline-flex}
+.name{margin:0;font:800 clamp(30px,8.6vw,42px)/1.02 var(--f-display);font-variation-settings:"wdth" 108;text-wrap:balance;letter-spacing:-.005em}
+.dose{align-self:flex-start;font:600 15px var(--f-mono);color:var(--h);background:color-mix(in oklab,var(--h) 16%,transparent);border:1px solid color-mix(in oklab,var(--h) 40%,transparent);padding:6px 10px;border-radius:8px}
+.how{list-style:none;margin:0;padding:0;display:grid;gap:9px;counter-reset:s}
+.how li{display:grid;grid-template-columns:24px 1fr;gap:10px;counter-increment:s;font-size:16px;line-height:1.4}
+.how li::before{content:counter(s);width:24px;height:24px;border-radius:50%;border:1.5px solid var(--h);color:var(--h);font:600 12px/21px var(--f-mono);text-align:center}
+.cues{display:grid;gap:6px;margin:0;font-size:14px}
+.cues div{display:grid;grid-template-columns:62px 1fr;gap:8px}
+.cues dt{font:600 11px/1.9 var(--f-mono);text-transform:uppercase;letter-spacing:.08em;color:var(--muted)}
+.cues dd{margin:0;color:var(--fg);opacity:.88}
+.act{display:flex;gap:10px;align-items:center;margin-top:2px}
+.done{flex:1;min-height:56px;border-radius:16px;border:1.5px solid var(--h);background:transparent;font-weight:700;font-size:17px;display:flex;align-items:center;justify-content:center;gap:8px;transition:background .25s,color .25s,transform .12s}
+.done:active{transform:scale(.97)}
+.done svg{width:20px;height:20px;stroke:currentColor;stroke-width:3;fill:none}
+.card.is-done .done{background:var(--h);color:var(--on-hue)}
+.timer{position:relative;width:64px;height:64px;flex:none;border:0;background:none;padding:0;border-radius:50%}
+.timer svg{width:64px;height:64px;transform:rotate(-90deg)}
+.timer circle{fill:none;stroke-width:5}
+.timer .trk{stroke:var(--line)}
+.timer .arc{stroke:var(--h);stroke-linecap:round;stroke-dasharray:169.65;stroke-dashoffset:0;transition:stroke-dashoffset .95s linear}
+.timer .tt{position:absolute;inset:0;display:grid;place-content:center;text-align:center;line-height:1.05}
+.timer b{font:600 15px var(--f-mono);font-variant-numeric:tabular-nums}
+.timer small{font:600 10px var(--f-mono);color:var(--muted);text-transform:uppercase;letter-spacing:.06em}
+.card.ticking .timer{animation:pulse 1s ease-in-out infinite}
+@keyframes pulse{50%{transform:scale(1.04)}}
+.sets{display:flex;gap:6px}
+.set{width:44px;height:56px;border-radius:12px;border:1.5px dashed color-mix(in oklab,var(--h) 60%,transparent);background:none;font:600 15px var(--f-mono);display:grid;place-items:center;transition:background .2s,color .2s,transform .12s}
+.set small{display:block;font-size:9px;color:var(--muted);letter-spacing:.06em}
+.set.on{background:color-mix(in oklab,var(--h) 30%,transparent);border-style:solid}
+.set:active{transform:scale(.94)}
+.tstat{min-height:20px;font:600 13px var(--f-mono);color:var(--h)}
+.src{display:flex;flex-wrap:wrap;gap:8px 12px;align-items:center;font-size:14px}
+.reel{display:inline-flex;align-items:center;gap:7px;padding:8px 12px;border-radius:10px;background:var(--chip);border:1px solid var(--line);color:var(--fg);text-decoration:none;font-weight:600}
+.reel svg{width:15px;height:15px;fill:currentColor}
+.alt{color:var(--muted);text-decoration:underline;text-underline-offset:3px}
+.noreel{color:var(--muted);font-size:13px}
+
+/* double tap pop */
+.pop{position:absolute;inset:0;display:grid;place-items:center;z-index:5;pointer-events:none;opacity:0}
+.pop svg{width:132px;height:132px}
+.pop.go{animation:pop .8s cubic-bezier(.2,.9,.3,1.3) forwards}
+@keyframes pop{0%{opacity:0;transform:scale(.4)}25%{opacity:1;transform:scale(1.12)}45%{transform:scale(.96)}70%{opacity:1;transform:scale(1)}100%{opacity:0;transform:scale(1.05)}}
+
+/* intro + end */
+.intro .in,.end .in{padding-bottom:34px}
+.eyebrow{font:600 12px var(--f-mono);text-transform:uppercase;letter-spacing:.1em;color:var(--muted)}
+.h1{margin:0;font:900 clamp(40px,12vw,60px)/.95 var(--f-display);font-variation-settings:"wdth" 120;text-wrap:balance}
+.lede{margin:0;font-size:17px;max-width:40ch;opacity:.9}
+.areas{display:flex;flex-wrap:wrap;gap:6px}
+.cta{min-height:58px;border-radius:16px;border:0;background:var(--fg);color:var(--bg);font-weight:800;font-size:17px;display:flex;align-items:center;justify-content:center;gap:10px}
+.cta.ghost{background:var(--chip);color:var(--fg);border:1px solid var(--line)}
+.ctas{display:grid;gap:10px}
+.hint{display:flex;flex-direction:column;align-items:center;gap:2px;color:var(--muted);font:600 12px var(--f-mono);text-transform:uppercase;letter-spacing:.1em}
+.hint svg{width:22px;height:22px;stroke:currentColor;fill:none;stroke-width:2.2;animation:bob 1.6s ease-in-out infinite}
+@keyframes bob{50%{transform:translateY(-6px)}}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.stats.four{grid-template-columns:repeat(2,1fr)}
+.stat{background:var(--chip);border:1px solid var(--line);border-radius:14px;padding:12px}
+.stat b{display:block;font:800 26px/1 var(--f-display);font-variation-settings:"wdth" 120;font-variant-numeric:tabular-nums}
+.stat span{font-size:12px;color:var(--muted)}
+.note{font-size:14px;color:var(--muted);border-left:3px solid var(--legs);padding:2px 0 2px 12px;margin:0}
+.bigcheck{width:84px;height:84px;border-radius:50%;background:var(--feet);display:grid;place-items:center}
+.bigcheck svg{width:44px;height:44px;stroke:var(--on-hue);stroke-width:3.5;fill:none}
+
+/* rail */
+.rail{position:absolute;right:12px;top:50%;transform:translateY(-38%);z-index:15;display:flex;flex-direction:column;gap:7px}
+.rail button{width:8px;height:8px;padding:0;border-radius:4px;border:0;background:var(--line);transition:height .25s,background .25s}
+.rail button.done{background:color-mix(in oklab,var(--fg) 55%,transparent)}
+.rail button.cur{height:24px;background:var(--fg)}
+
+/* sheets */
+.sheet{position:absolute;inset:0;z-index:40;display:flex;flex-direction:column;justify-content:flex-end;background:var(--scrim);opacity:0;transition:opacity .25s}
+.sheet.open{opacity:1}
+.panel{background:var(--bg2);border-radius:22px 22px 0 0;max-height:88%;overflow:auto;padding:10px 18px 28px;transform:translateY(40px);transition:transform .3s cubic-bezier(.2,.8,.2,1);border-top:1px solid var(--line)}
+.sheet.open .panel{transform:none}
+.grab{width:40px;height:4px;border-radius:2px;background:var(--line);margin:0 auto 12px}
+.ph{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:6px}
+.ph h2{margin:0;font:800 24px var(--f-display);font-variation-settings:"wdth" 115}
+.x{border:1px solid var(--line);background:var(--chip);border-radius:999px;width:36px;height:36px;font-size:18px;line-height:1}
+.panel p{color:var(--muted);font-size:14px;margin:6px 0 14px}
+.grp{margin-top:18px}
+.grp h3{margin:0 0 6px;font:700 15px var(--f-body);display:flex;align-items:center;gap:8px}
+.grp h3 .d{width:10px;height:10px;border-radius:50%;background:var(--h)}
+.grp h3 span{font:600 12px var(--f-mono);color:var(--muted)}
+.lib{list-style:none;margin:0;padding:0}
+.lib li{display:grid;grid-template-columns:1fr auto;gap:10px;align-items:center;padding:10px 0;border-bottom:1px solid var(--line)}
+.lib a{color:var(--fg);text-decoration:none;font-weight:600;font-size:15px}
+.lib .by{font-size:12px;color:var(--muted)}
+.use{font:600 10px var(--f-mono);padding:4px 7px;border-radius:6px;background:var(--chip);border:1px solid var(--line);white-space:nowrap;text-transform:uppercase;letter-spacing:.05em}
+.cal{display:grid;grid-template-columns:repeat(7,1fr);gap:6px}
+.day{border:1px solid var(--line);border-radius:10px;padding:7px 2px;text-align:center;font:600 11px var(--f-mono);color:var(--muted)}
+.day.today{border-color:var(--fg);color:var(--fg)}
+.day i{display:block;height:5px;border-radius:3px;margin:5px 6px 0;background:var(--line)}
+.day i.am.on{background:var(--legs)}
+.day i.pm.on{background:var(--hips)}
+.day i.gear.on{background:var(--neck)}
+.legend{display:flex;gap:14px;font-size:12px;color:var(--muted);margin-top:10px}
+.legend b{display:inline-block;width:14px;height:5px;border-radius:3px;margin-right:6px;vertical-align:middle}
+.small{border:1px solid var(--line);background:var(--chip);border-radius:10px;padding:8px 12px;font-weight:600;font-size:13px;margin-top:16px}
+
+@media (prefers-reduced-motion: reduce){
+  *{animation:none!important;transition:none!important}
+  .pop.go{opacity:1}
+}
+@media (max-height:700px){.in{gap:11px;padding-top:140px}.how li{font-size:15px}.cues{font-size:13px}.big{top:118px}}
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="top">
+    <div class="row">
+      <span class="brand">Daily Reset</span>
+      <button class="ibtn" id="open-lib" aria-label="Open reel library"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="4"/><path d="M10 9l5 3-5 3z"/></svg>Reels</button>
+      <button class="ibtn" id="open-log" aria-label="Open log"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="3"/><path d="M3 10h18M8 3v4M16 3v4"/></svg>Log</button>
+    </div>
+    <div class="seg" id="seg">
+      <button data-deck="am" aria-pressed="false">Morning</button>
+      <button data-deck="pm" aria-pressed="false">Evening</button>
+      <button data-deck="gear" aria-pressed="false">Ball + Band</button>
+    </div>
+    <div class="prog"><span id="pcount">0/0</span><span class="bar"><i id="pbar"></i></span><span id="pmins"></span></div>
+  </div>
+  <main id="feed" aria-live="off"></main>
+  <nav class="rail" id="rail" aria-label="Exercises"></nav>
+
+  <div class="sheet" id="sheet-lib" hidden><div class="panel" role="dialog" aria-label="Reel library"><div class="grab"></div><div id="lib-body"></div></div></div>
+  <div class="sheet" id="sheet-log" hidden><div class="panel" role="dialog" aria-label="Log"><div class="grab"></div><div id="log-body"></div></div></div>
+</div>
+
+<script>
+const IG = c => "https://www.instagram.com/p/" + c + "/";
+const AREAS = {neck:"Neck", upback:"Upper back", lowback:"Lower back", hips:"Hips and glutes", legs:"Legs", feet:"Feet, heel, shin"};
+const BIG = {neck:"NECK", upback:"UPPER\nBACK", lowback:"LOWER\nBACK", hips:"HIPS", legs:"LEGS", feet:"FEET"};
+const TYPES = {mob:"Mobility", str:"Strength", st:"Stretch"};
+
+const DECKS = {
+  am: {
+    label:"Morning", word:"UN\nLOCK", title:"Unlock", mins:14,
+    intent:"Undo yesterday's sitting. Loosen the neck, mid-back and hips, then switch on the glutes and back muscles that a desk lets go weak.",
+    cards:[
+      {id:"chin", n:"Chin tucks and neck extension", area:"neck", type:"mob", dose:"10 reps, 3 s hold", reel:"DaIeUPjBSSO",
+        steps:["Sit or stand tall, eyes level.","Slide your chin straight back into a double chin. Hold 3 s.","Keep the tuck and slowly look up toward the ceiling.","Come back to level and fully relax."],
+        feel:"Back of the neck and base of the skull.", avoid:"Nodding the head down instead of sliding it back."},
+      {id:"trap", n:"Upper trap neck stretch", area:"neck", type:"st", dose:"30 s each side", reel:"DaNaGx9TiK3", alt:["DUp3cXrERZd","DZTa1svOV9f"], timer:{s:30,n:2},
+        steps:["Sit tall and hold the chair seat with your right hand.","Tilt your left ear toward your left shoulder.","Rest your left hand on your head and let its weight add a light pull.","Breathe slowly, then switch sides."],
+        feel:"Side of the neck into the top of the shoulder.", avoid:"Shrugging the shoulder you are stretching."},
+      {id:"thread", n:"Thread the needle", area:"upback", type:"mob", dose:"8 reps each side", reel:"DdeBfzmFp9m",
+        steps:["Start on all fours, hands under shoulders.","Slide your right arm under your left until your shoulder and temple rest down.","Breathe, then sweep that arm up to the ceiling and follow it with your eyes.","Do 8, then switch sides."],
+        feel:"Between the shoulder blades and mid-back.", avoid:"Swaying the hips sideways. Keep them over the knees."},
+      {id:"catcow", n:"Cat-cow", area:"lowback", type:"mob", dose:"10 slow reps", reel:"DdlM_q6uSB0", alt:["DdtguCkyWhy"],
+        steps:["On all fours, wrists under shoulders, knees under hips.","Breathe in: drop the belly, lift the chest and tailbone.","Breathe out: round the back up, tuck the tailbone, push the floor away.","About 4 s per rep. Move one segment at a time."],
+        feel:"The whole spine, mostly the lower back.", avoid:"Rushing through it."},
+      {id:"hipflow", n:"Morning hip flow", area:"hips", type:"mob", dose:"7 moves, 6 reps each", reel:"DeAAEDADblF", alt:["DbqJ2FftrjC"],
+        steps:["Lying hip twists, then knee-to-chest.","Dynamic frog: knees wide, rock hips back and forward.","Hip dives with a turn, then dynamic sphinx.","90/90 side bend, then knee taps into fire hydrants."],
+        feel:"Hips, groin and lower back loosening up.", avoid:"Forcing range. Smooth and pain-free only."},
+      {id:"bridge", n:"Glute bridge", area:"hips", type:"str", dose:"2 x 12, 2 s squeeze", sets:2, reel:"DdlM_q6uSB0",
+        steps:["Lie on your back, knees bent, feet hip-width, heels close to your hips.","Gently flatten your lower back, then drive through your heels.","Lift until knees, hips and shoulders line up. Squeeze the glutes 2 s.","Lower slowly, one vertebra at a time."],
+        feel:"Glutes, not the lower back.", avoid:"Over-arching at the top.", harder:"Single-leg bridge, 2 x 8 each side."},
+      {id:"birddog", n:"Bird dog", area:"lowback", type:"str", dose:"2 x 8 each side, 3 s hold", sets:2, reel:"DdlM_q6uSB0",
+        steps:["On all fours, brace your stomach like you are about to be poked.","Reach the right arm forward and the left leg back together.","Hold 3 s with hips level, as if balancing a glass of water on your back.","Return slowly and switch."],
+        feel:"Lower back muscles, glutes, back of the shoulder.", avoid:"Kicking the leg high and arching.", harder:"Pull elbow to knee under your body between reps."},
+      {id:"ankle", n:"Knee-to-wall ankle drill", area:"feet", type:"mob", dose:"10 reps each side", reel:"DcYTmwQjito",
+        steps:["Face a wall, toes a hand-width away.","Keep the heel down and drive the knee forward to touch the wall.","Hold 2 s and return. Slide the foot back as it gets easy.","Do 10, then switch."],
+        feel:"Front of the ankle and the calf.", avoid:"Heel lifting or the knee caving inward."},
+      {id:"tib", n:"Wall tibialis raises", area:"feet", type:"str", dose:"2 x 15", sets:2,
+        steps:["Lean your back on a wall, heels about a foot out.","Keep legs straight and lift your toes as high as you can.","Lower slowly for 2 s. Don't let the toes slap down.","Rest 30 s between sets."],
+        feel:"Front of the shin.", avoid:"Bending the knees to cheat.", harder:"Move your heels further from the wall."}
+    ]
+  },
+  pm: {
+    label:"Evening", word:"BUILD", title:"Build, then release", mins:26,
+    intent:"Strength first for the legs, hips and back you said have gone weak. Then long holds so the neck, hips, hamstrings and calves let go before bed.",
+    cards:[
+      {id:"squat", n:"Chair squat", area:"legs", type:"str", dose:"3 x 10", sets:3,
+        steps:["Stand in front of a chair, feet shoulder-width, toes slightly out.","Push hips back and bend the knees, chest up, arms forward.","Tap the chair lightly. Don't sit down and relax.","Drive up through the whole foot and squeeze the glutes at the top."],
+        feel:"Thighs and glutes.", avoid:"Knees caving inward.", harder:"Take 3 s to lower, or hug a loaded backpack."},
+      {id:"latlunge", n:"Lateral lunge", area:"hips", type:"str", dose:"2 x 8 each side", sets:2, reel:"Dd8oEVSFnY1",
+        steps:["Stand with feet wide, toes forward.","Shift your weight right, bend the right knee and push the hips back.","Keep the left leg straight and both feet flat.","Push back to center. Finish all reps, then switch."],
+        feel:"Glute of the bent leg, inner thigh of the straight one.", avoid:"Rounding the back to go lower.", harder:"Hold a water bottle or bag at your chest."},
+      {id:"ninety", n:"90/90 leg raises", area:"hips", type:"str", dose:"3 x 8 each side", sets:3, reel:"Dc4aijbIjqz", alt:["DZF7WPxCjfU"],
+        steps:["Sit with both legs bent at 90 degrees, one in front, one to the side.","Sit tall. Hands on the floor behind you if needed.","Lift the back knee and foot off the floor. Hold 1 s.","Lower with control. Switch sides."],
+        feel:"Deep outer hip of the back leg.", avoid:"Leaning away to fake the lift.", harder:"Hands off the floor."},
+      {id:"superman", n:"Superman pulls", area:"upback", type:"str", dose:"3 x 10", sets:3, reel:"B9zpM-aAlUV",
+        steps:["Lie face down, arms overhead, forehead just off the floor.","Lift chest and arms a few centimetres.","Pull the elbows down to your ribs and squeeze the shoulder blades together.","Reach forward again, then lower."],
+        feel:"Between the shoulder blades and along the spine.", avoid:"Throwing the head back. Eyes on the floor.", harder:"Hold the squeeze 3 s."},
+      {id:"heel", n:"Slow heel raises", area:"feet", type:"str", dose:"3 x 10, 3 s down", sets:3, reel:"Ddh9ifytp4F", alt:["DeIajjUtdS_"],
+        steps:["Stand on the edge of a step, holding something for balance.","Rise up on both feet in 2 s.","Lower for 3 s until the heels dip just below the step.","Keep it slow the whole time."],
+        feel:"Calves and the sole of the foot.", avoid:"Pushing through sharp heel pain. Shorten the range instead.", harder:"Up on two feet, down on one."},
+      {id:"levator", n:"Levator scapula stretch", area:"neck", type:"st", dose:"30 s each side", reel:"DXnXvpXDXSs", alt:["DWm5QRLkRLh"], timer:{s:30,n:2},
+        steps:["Sit tall and hold the chair seat with your right hand.","Turn your nose toward your left armpit.","Place your left hand on the back of your head and let it add a light pull down.","Breathe, then switch."],
+        feel:"Back of the neck into the top of the shoulder blade.", avoid:"Rounding the whole back. Only the head moves."},
+      {id:"kneel", n:"Hip flexor to hamstring", area:"hips", type:"st", dose:"45 s x 2 positions, each side", reel:"Dd8oEVSFnY1", timer:{s:45,n:4,labels:["Right: hip flexor","Right: hamstring","Left: hip flexor","Left: hamstring"]},
+        steps:["Kneel on your right knee, left foot forward.","Tuck the tailbone, squeeze the right glute and shift forward. Hold.","Sit back over the right knee, straighten the left leg, toes up. Hold.","Switch sides."],
+        feel:"Front of the back hip, then back of the front thigh.", avoid:"Arching the lower back in the hip flexor hold."},
+      {id:"strap", n:"Lying hamstring stretch", area:"legs", type:"st", dose:"60 s each side", reel:"DZHsUR1sBuu", alt:["DbfSGaDx38w"], timer:{s:60,n:2},
+        steps:["Lie on your back with a towel or belt around one foot.","Raise that leg toward the ceiling, other leg long on the floor.","Pull gently. Point and flex the foot a few times.","Keep the lower back flat, then switch."],
+        feel:"Back of the thigh and calf.", avoid:"Lifting the hip or bending the knee a lot."},
+      {id:"pigeon", n:"Pigeon pose", area:"hips", type:"st", dose:"90 s each side", reel:"DeCKCUmjOC1", alt:["Datn1JQilb-"], timer:{s:90,n:2},
+        steps:["From all fours, bring the right knee toward the right wrist, shin angled across.","Slide the left leg straight back and keep the hips square.","Walk the hands forward and rest on forearms or a pillow.","Breathe into the right glute. Switch."],
+        feel:"Outer hip and glute of the front leg.", avoid:"Knee pain. If so, do a figure-4 on your back instead."},
+      {id:"calf", n:"Wall calf stretch", area:"legs", type:"st", dose:"45 s x 2 positions, each side", reel:"DAMh-yXBTfw", timer:{s:45,n:4,labels:["Right: straight knee","Right: bent knee","Left: straight knee","Left: bent knee"]},
+        steps:["Hands on a wall, right foot back, heel down, toes forward.","Back knee straight, lean in. Hold.","Bend the back knee slightly, heel still down. Hold.","Switch sides."],
+        feel:"Upper calf, then lower calf and Achilles.", avoid:"Letting the back foot turn out."},
+      {id:"child", n:"Child's pose to cobra", area:"lowback", type:"mob", dose:"6 slow reps, then rest 60 s", reel:"DdlM_q6uSB0", alt:["DdeBfzmFp9m"], timer:{s:60,n:1,labels:["Rest in child's pose"]},
+        steps:["Start in child's pose, arms long, hips on heels.","Shift forward into a low cobra: hips down, chest up, elbows soft.","Breathe, then press back to child's pose.","After 6, rest in child's pose and start the timer."],
+        feel:"Lower back decompressing, front of the body opening.", avoid:"Pushing into a high cobra if the back pinches."}
+    ]
+  },
+  gear: {
+    label:"Ball + Band", word:"GEAR", title:"Ball, band and mat", mins:25, freq:"3 days a week",
+    intent:"Extra strength for a weak back, hips and legs, using your yoga ball, stretch band and mat. Do it 3 days a week, on its own or after the evening session.",
+    tip:"<b>Ball check:</b> sitting on it, your hips should be level with or a little above your knees. Put it near a wall the first few times. <b>Long flat band?</b> Tie it into a loop for the clamshells.",
+    cards:[
+      {id:"g-circles", n:"Ball hip circles", area:"lowback", type:"mob", gear:["Ball"], dose:"10 each way",
+        steps:["Sit on the ball, feet flat and wider than your hips, hands on knees.","Roll the pelvis forward and back 10 times.","Then side to side 10 times.","Finish with slow circles, 10 each direction."],
+        feel:"Lower back and hips warming up.", avoid:"Moving the shoulders. Only the pelvis moves."},
+      {id:"g-wgs", n:"World's greatest stretch", area:"hips", type:"mob", gear:["Mat"], dose:"5 reps each side", reel:"DXIls_5jQXK",
+        steps:["Step into a long lunge, right foot forward, left knee down on the mat.","Left hand on the floor. Drop the right elbow toward the right instep.","Rotate and reach the right arm to the ceiling. Eyes follow the hand.","Return, repeat 5, then switch."],
+        feel:"Hip flexor of the back leg, groin, mid-back rotation.", avoid:"Letting the front knee cave in."},
+      {id:"g-chin", n:"Band chin-tuck press", area:"neck", type:"str", gear:["Band"], dose:"10 reps, 5 s hold",
+        steps:["Loop the band behind your head at the base of the skull. Hold both ends in front of your face.","Pull the ends forward so the band presses lightly on your head.","Slide your chin straight back into the band. Hold 5 s.","Relax and repeat. Eyes stay level."],
+        feel:"Deep neck muscles front and back.", avoid:"Tilting the head up or down. Straight back only.", harder:"Pull the band tighter."},
+      {id:"g-pull", n:"Band pull-apart", area:"upback", type:"str", gear:["Band"], dose:"3 x 15", sets:3,
+        steps:["Stand tall. Hold the band at shoulder height, arms straight, hands shoulder-width.","Pull the band apart until it touches your chest.","Squeeze the shoulder blades together for 1 s.","Return slowly."],
+        feel:"Rear shoulders and between the shoulder blades.", avoid:"Shrugging toward your ears.", harder:"Grip the band with hands closer together."},
+      {id:"g-row", n:"Seated band row", area:"upback", type:"str", gear:["Band","Mat"], dose:"3 x 12", sets:3,
+        steps:["Sit on the mat, legs straight, band looped around the soles of your feet.","Sit tall, holding the ends with arms straight.","Pull the elbows back past your ribs and squeeze the shoulder blades.","Return slowly without rounding forward."],
+        feel:"Mid-back and back of the shoulders.", avoid:"Leaning back to move the band.", harder:"Shorten your grip on the band."},
+      {id:"g-ext", n:"Ball back extension", area:"lowback", type:"str", gear:["Ball"], dose:"3 x 10", sets:3,
+        steps:["Lie face down with hips and belly on the ball, toes wide on the floor or braced on a wall.","Let your chest curl down over the ball, hands by your ears.","Lift the chest until your body is a straight line. Squeeze the glutes.","Lower slowly."],
+        feel:"Lower back muscles and glutes.", avoid:"Swinging past straight into a big arch.", harder:"Arms straight overhead."},
+      {id:"g-deadbug", n:"Ball dead bug", area:"lowback", type:"str", gear:["Ball","Mat"], dose:"2 x 8 each side", sets:2, rel:"DXi9FxbkbrI",
+        steps:["Lie on your back. Hold the ball between your hands and knees, knees over hips.","Press your lower back flat into the mat.","Pin the ball with one hand and the opposite knee. Extend the other arm and leg long.","Bring them back to the ball and switch."],
+        feel:"Deep core that protects the lower back.", avoid:"Lower back lifting off the mat.", harder:"3 s out, 3 s back."},
+      {id:"g-wallsquat", n:"Ball wall squat", area:"legs", type:"str", gear:["Ball"], dose:"3 x 12", sets:3,
+        steps:["Ball between your lower back and a wall. Feet a step forward, shoulder-width.","Squat down and let the ball roll up your back.","Go to thighs parallel, or as far as is comfortable.","Drive up through the heels."],
+        feel:"Thighs and glutes.", avoid:"Knees caving in or heels lifting.", harder:"Hold the bottom 3 s each rep."},
+      {id:"g-curl", n:"Ball hamstring curl", area:"legs", type:"str", gear:["Ball","Mat"], dose:"3 x 8", sets:3, rel:"DUYuknDiOpH",
+        steps:["Lie on your back, heels on top of the ball, arms out wide.","Lift your hips so your body is a straight line.","Keep the hips up and curl the ball toward you with your heels.","Roll it back out slowly. Lower the hips after the set."],
+        feel:"Hamstrings and glutes.", avoid:"Hips dropping as you curl.", harder:"One leg on the ball, the other in the air."},
+      {id:"g-clam", n:"Banded clamshell", area:"hips", type:"str", gear:["Band","Mat"], dose:"2 x 15 each side", sets:2,
+        steps:["Loop the band just above your knees.","Lie on your side, hips and knees bent, heels together.","Keep the heels touching and lift the top knee against the band.","Pause 1 s, lower slowly. Switch sides after the set."],
+        feel:"Side of the hip and glute.", avoid:"Rolling the top hip backward.", harder:"Lift both feet slightly off the floor and keep them there."},
+      {id:"g-ankle", n:"Band ankle push and pull", area:"feet", type:"str", gear:["Band","Mat"], dose:"15 pushes + 30 s pull, each foot", sets:2,
+        steps:["Sit on the mat, leg straight, band around the ball of the foot, ends in your hands.","Push the foot away against the band like a car pedal. 15 slow reps.","Then pull the toes back toward you with the band and hold 30 s.","Switch feet. Each foot counts as one set."],
+        feel:"Calf and sole on the push, back of the calf on the pull.", avoid:"Bending the knee on the pull.", harder:"Slower pushes or a stronger band."},
+      {id:"g-drape", n:"Ball back drape", area:"upback", type:"st", gear:["Ball"], dose:"60 s", timer:{s:60,n:1,labels:["Drape and breathe"]},
+        steps:["Sit on the ball and walk your feet forward until your upper back rests on it.","Lower the hips and let the arms fall back over the ball.","Reach the arms overhead and breathe into your chest.","To get out, tuck your chin and walk the feet back in."],
+        feel:"Chest and mid-back opening.", avoid:"Letting the head hang if your neck complains. Support it with a hand."},
+      {id:"g-ham3", n:"Band hamstring 3-way", area:"legs", type:"st", gear:["Band","Mat"], dose:"30 s x 3 positions, each side", rel:"DZHsUR1sBuu", timer:{s:30,n:6,labels:["Right: straight up","Right: out to the side","Right: across the body","Left: straight up","Left: out to the side","Left: across the body"]},
+        steps:["Lie on the mat, band around the right foot, leg straight up.","Hold straight up, then let the leg open out to the side.","Then bring it across the body toward the left shoulder.","Keep the other leg flat. Switch sides."],
+        feel:"Back of the thigh, then inner thigh, then outer hip.", avoid:"Hips rolling off the mat in the side positions."},
+      {id:"g-rhomb", n:"Shoulder blade stretch", area:"upback", type:"st", gear:["Mat"], dose:"30 s each side", reel:"DXCld9-Dbe3", timer:{s:30,n:2},
+        steps:["Sit on the mat with knees bent.","Grab your right ankle with your right hand and hook the elbow inside the knee.","Round forward and let the knee push the shoulder blade wide.","Go low, breathe into your back, then switch."],
+        feel:"Between the shoulder blades.", avoid:"Holding your breath."}
+    ]
+  }
+};
+
+const LIB = [
+  ["neck","Neck and upper back",[
+    ["DaIeUPjBSSO","physicaltherapysession","Neck extension to undo forward head posture"],
+    ["DaNaGx9TiK3","karthikmayur","Neck release stretch, twice daily"],
+    ["DXnXvpXDXSs","drjoedamiani","Levator scapula stretch done right"],
+    ["DdeBfzmFp9m","themobilitymanual","Stiff back 5: cobra to child's pose, sphinx, reach and thread, twists, dead hang"],
+    ["DXQFtkZDuQU","youngeryoudoc","5 yoga-block moves for the thoracic spine"],
+    ["DWm5QRLkRLh","jamesmoorewellness","Upper back release"],
+    ["DZTa1svOV9f","youngeryoudoc","Skin pull and move before a neck stretch"],
+    ["DdTjy8Tgpk1","drrodpt","Shoulder and neck pain relief"],
+    ["DZ2zHjPJiUg","drjoedamiani","Shoulder blade control for neck headaches"],
+    ["DZJXxgNiWNV","advancedathletics","Why traps stay tight"],
+    ["DbR18oMvKc7","drson1991","Habits making neck pain worse"],
+    ["DUp3cXrERZd","oliya_2104","Gentle stretches for a neck stiff from screen hours"],
+    ["DXCld9-Dbe3","kivenro.flexibility","Stretch for tight shoulder blades from sitting"],
+    ["DXeg5cojmm0","movementby.mo","Shoulder mobility series"],
+    ["DXZUMiCjg6_","movementby.mo","Supported head rest to ease neck tension"]
+  ]],
+  ["lowback","Lower back",[
+    ["DdlM_q6uSB0","vanja.moves","6 daily moves: cat-cow, pelvic tilts, bridges, bird dog, rotations, child's pose to cobra"],
+    ["DdtguCkyWhy","breathe.with.angel","5 lower back moves in bed"],
+    ["DdCBaQ4hzX7","yogasong_hayeon","5 daily lower back movements"],
+    ["DctzYH0ALJW","dr.backpain","Back and hips after long sitting"],
+    ["DdcHM-CGB0c","themobilitymanual","Sit a lot? Hip, spine and hamstring routine"],
+    ["DdXjhoeO4Dk","youngeryoudoc","Nerve glide for back pain"],
+    ["DTckhZrDOru","oliya_2104","Sphinx, bridge and knee-to-chest for the lower back"]
+  ]],
+  ["hips","Hips and glutes",[
+    ["DeAAEDADblF","backpaincare","Morning mobility after 40 (7 moves)"],
+    ["Dd8oEVSFnY1","themobilitymanual","Hip flexor to hamstring, adductor rock backs, lateral lunges"],
+    ["Dc4aijbIjqz","janiedenaeyer","Hip mobility flow with 90/90 raises"],
+    ["DdFoJM8OU93","postureguymike","Hip flexor release, femur rotations, wall butterfly"],
+    ["DeCKCUmjOC1","anypainrelief","Pigeon, sleeping swan, reclined butterfly"],
+    ["Datn1JQilb-","dr.backpain","Tennis ball glute release"],
+    ["DaQVJ-5sRzN","dilan.cyl","Hip flexor stretch that also strengthens"],
+    ["DZF7WPxCjfU","zubalenok","Hip rotation drills"],
+    ["DbqJ2FftrjC","laurahflows","5-move morning flow"],
+    ["DXIls_5jQXK","drewpala","Flow: 90-90s, world's greatest stretch, squat twist, kneeling lunge"],
+    ["DUXj3V6DDul","oliya_2104","Double pigeon and more for tight glutes"],
+    ["DXBfDclkXM2","yogasini","Tight hips sequence"]
+  ]],
+  ["legs","Strength and legs",[
+    ["B9zpM-aAlUV","nochtlii","Back circuit: plank ups, superman pulls, supermans, good mornings"],
+    ["Db1GnOqgHnw","dr.backpain","Hip, thigh and calf strength for stable knees"],
+    ["DdmGne3I0uZ","osteotiaofficial","Back pain plan with progressive loading"],
+    ["DZHsUR1sBuu","oliya_2104","Bridge and lying hamstring stretch"],
+    ["DbfSGaDx38w","anjalipandey_yoga","PNF hamstring stretch"],
+    ["DAMh-yXBTfw","physicaltherapysession","Leg pain relief stretch"],
+    ["Ddr4VoGteRH","kivenro.flexibility","Can't touch your toes? Step by step"],
+    ["DXi9FxbkbrI","yogasini","Core work for a weak core"],
+    ["DUYuknDiOpH","real_sara_","Hip thrusts, split squats, hamstring curls, kickbacks"],
+    ["DTVPFv3AF-n","dedication","Wide-legged forward fold"]
+  ]],
+  ["feet","Feet, heel and shin",[
+    ["Ddh9ifytp4F","dr.schutza.pt","Gentle loading for plantar fasciitis"],
+    ["DeIajjUtdS_","dr.schutza.pt","Arch strengthening, level 2"],
+    ["DdpKPTQgCTr","dr.backpain","Barefoot foot exercises on a block"],
+    ["DcYTmwQjito","vanja.moves","Ankle mobility drill"],
+    ["Da_E0nGJCg2","itsdoctorbawa","One switch for heel pain"]
+  ]]
+];
+const REEL = {}; LIB.forEach(([,,arr])=>arr.forEach(([c,u,t])=>REEL[c]={u,t}));
+const USED = {}; Object.entries(DECKS).forEach(([k,d])=>d.cards.forEach(c=>{if(c.reel)USED[c.reel]=USED[c.reel]||d.label;}));
+Object.entries(DECKS).forEach(([k,d])=>d.cards.forEach(c=>{(c.alt||[]).forEach(r=>{USED[r]=USED[r]||"Swap"}); if(c.rel)USED[c.rel]=USED[c.rel]||"Related"}));
+
+/* storage */
+const KEY="dailyReset.v2";
+let store={days:{}}; try{store=JSON.parse(localStorage.getItem(KEY))||store}catch(e){}
+const save=()=>{try{localStorage.setItem(KEY,JSON.stringify(store))}catch(e){}};
+const dk=d=>d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");
+const today=dk(new Date());
+const day=k=>{const r=store.days[k]||(store.days[k]={}); r.am=r.am||[]; r.pm=r.pm||[]; r.gear=r.gear||[]; return r};
+const doneCount=(k,deck)=>{const r=store.days[k]; if(!r||!r[deck])return 0; const ids=new Set(DECKS[deck].cards.map(c=>c.id)); return r[deck].filter(i=>ids.has(i)).length};
+const complete=(k,deck)=>doneCount(k,deck)>=DECKS[deck].cards.length;
+function streak(){const d=new Date(); if(!(complete(dk(d),"am")&&complete(dk(d),"pm"))) d.setDate(d.getDate()-1); let n=0; while(complete(dk(d),"am")&&complete(dk(d),"pm")){n++; d.setDate(d.getDate()-1)} return n}
+
+/* helpers */
+const $=s=>document.querySelector(s);
+const feed=$("#feed"), rail=$("#rail");
+const C=169.65;
+const fmt=s=>s>=60?Math.floor(s/60)+":"+String(s%60).padStart(2,"0"):"0:"+String(s).padStart(2,"0");
+const reduce=matchMedia("(prefers-reduced-motion: reduce)").matches;
+const CHECK='<svg viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+let ac=null;
+function beep(f,d){try{ac=ac||new (window.AudioContext||window.webkitAudioContext)(); const o=ac.createOscillator(),g=ac.createGain(); o.type="sine"; o.frequency.value=f; o.connect(g); g.connect(ac.destination); const t=ac.currentTime; g.gain.setValueAtTime(.0001,t); g.gain.exponentialRampToValueAtTime(.22,t+.02); g.gain.exponentialRampToValueAtTime(.0001,t+d); o.start(t); o.stop(t+d+.03)}catch(e){}}
+function buzz(p){try{navigator.vibrate&&navigator.vibrate(p)}catch(e){}}
+let wl=null; async function keepAwake(){try{if("wakeLock" in navigator&&!wl){wl=await navigator.wakeLock.request("screen"); wl.addEventListener("release",()=>wl=null)}}catch(e){}}
+
+let cur="am";
+
+function hues(deck){return [...new Set(DECKS[deck].cards.map(c=>c.area))]}
+
+function introHTML(deck){
+  const D=DECKS[deck], hs=hues(deck);
+  const pos=[[15,22],[85,12],[70,48],[20,60],[50,30],[90,70]];
+  const bg=hs.map((h,i)=>`radial-gradient(45% 30% at ${pos[i][0]}% ${pos[i][1]}%, color-mix(in oklab, var(--${h}) 42%, transparent), transparent 70%)`).join(",");
+  const n=doneCount(today,deck), tot=D.cards.length;
+  return `<section class="card intro" style="--h:var(--fg);background:${bg},var(--bg)">
+    <p class="big" aria-hidden="true">${D.word}</p>
+    <div class="in">
+      <span class="eyebrow">${D.label} · ${tot} moves · about ${D.mins} min${D.freq?" · "+D.freq:""}</span>
+      <h1 class="h1">${D.title}</h1>
+      <p class="lede">${D.intent}</p>
+      ${D.tip?`<p class="tip">${D.tip}</p>`:""}
+      <div class="areas">${hs.map(h=>`<span class="chip" style="--h:var(--${h})"><span class="d"></span>${AREAS[h]}</span>`).join("")}</div>
+      <div class="ctas"><button class="cta" data-act="start">${n===0?"Start":n>=tot?"Review today's session":"Continue from "+(n+1)} ${n>=tot?"":"<svg viewBox='0 0 24 24' width='20' height='20' fill='none' stroke='currentColor' stroke-width='2.4'><path d='M12 5v14M6 13l6 6 6-6'/></svg>"}</button></div>
+      <div class="hint" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M6 15l6-6 6 6"/></svg>Swipe up</div>
+    </div></section>`;
+}
+
+function cardHTML(c,i,tot,isDone){
+  const src=c.reel&&REEL[c.reel];
+  let ctrl="";
+  if(c.timer){ctrl=`<button class="timer" data-act="timer" aria-label="Start timer, ${c.timer.s} seconds${c.timer.n>1?", "+c.timer.n+" rounds":""}"><svg viewBox="0 0 64 64" aria-hidden="true"><circle class="trk" cx="32" cy="32" r="27"/><circle class="arc" cx="32" cy="32" r="27"/></svg><span class="tt"><b>${fmt(c.timer.s)}</b><small>${c.timer.n>1?"x"+c.timer.n:"tap"}</small></span></button>`}
+  else if(c.sets){ctrl=`<div class="sets" role="group" aria-label="Tap each set as you finish it">${Array.from({length:c.sets},(_,k)=>`<button class="set${isDone?" on":""}" data-act="set" data-k="${k}" aria-pressed="${isDone}"><span>${k+1}<small>SET</small></span></button>`).join("")}</div>`}
+  return `<article class="card ex${isDone?" is-done":""}" data-id="${c.id}" data-i="${i}" style="--h:var(--${c.area})">
+    <p class="big" aria-hidden="true">${BIG[c.area]}</p>
+    <div class="in">
+      <div class="kick"><span class="chip">${String(i+1).padStart(2,"0")} / ${String(tot).padStart(2,"0")}</span><span class="chip"><span class="d"></span>${AREAS[c.area]}</span><span class="chip">${TYPES[c.type]}</span>${(c.gear||[]).map(g=>`<span class="chip gear">${g}</span>`).join("")}<span class="chip donechip">${CHECK.replace('<svg','<svg width="12" height="12" stroke="currentColor" stroke-width="3" fill="none"')}Done</span></div>
+      <h2 class="name">${c.n}</h2>
+      <span class="dose">${c.dose}</span>
+      <ol class="how">${c.steps.map(s=>`<li>${s}</li>`).join("")}</ol>
+      <dl class="cues"><div><dt>Feel</dt><dd>${c.feel}</dd></div><div><dt>Avoid</dt><dd>${c.avoid}</dd></div>${c.harder?`<div><dt>Harder</dt><dd>${c.harder}</dd></div>`:""}</dl>
+      <div class="act">${ctrl}<button class="done" data-act="done" aria-pressed="${isDone}">${CHECK}<span>${isDone?"Done":"Mark done"}</span></button></div>
+      <div class="tstat" aria-live="polite">${c.timer?"Tap the ring to start the timer":c.sets?"Tap each set as you finish it":""}</div>
+      <div class="src">${src?`<a class="reel" href="${IG(c.reel)}" target="_blank" rel="noopener"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>Watch @${src.u}</a>`:`<span class="noreel">No exact reel in your saves. Follow the steps above.</span>`}${c.rel?`<a class="alt" href="${IG(c.rel)}" target="_blank" rel="noopener">Related: @${REEL[c.rel].u}</a>`:""}${(c.alt||[]).map(a=>`<a class="alt" href="${IG(a)}" target="_blank" rel="noopener">Swap: @${REEL[a].u}</a>`).join("")}</div>
+    </div>
+    <div class="pop" aria-hidden="true"><svg viewBox="0 0 120 120"><circle cx="60" cy="60" r="56" fill="var(--h)"/><path d="M36 62l16 16 32-34" fill="none" stroke="var(--on-hue)" stroke-width="10" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+  </article>`;
+}
+
+function endHTML(deck){
+  const w={am:"GOOD\nSTART",pm:"DONE\nTODAY",gear:"STRONG"}[deck];
+  return `<section class="card end" style="--h:var(--feet)"><p class="big" aria-hidden="true">${w}</p><div class="in" id="end-in"></div></section>`;
+}
+function weekGear(){let n=0; const d=new Date(); for(let i=0;i<7;i++){if(complete(dk(d),"gear"))n++; d.setDate(d.getDate()-1)} return n}
+function paintEnd(){
+  const el=document.getElementById("end-in"); if(!el)return;
+  const D=DECKS[cur], n=doneCount(today,cur), tot=D.cards.length, all=n>=tot;
+  const others=Object.keys(DECKS).filter(k=>k!==cur);
+  const head={am:"Morning done",pm:"Evening done",gear:"Ball + Band done"}[cur];
+  const msg={am:"Glutes and back are switched on. The evening session builds strength and lets it all go.",pm:"That's both halves of the day if you did the morning too. Same again tomorrow.",gear:"Extra strength banked. Aim for 3 of these a week."}[cur];
+  el.innerHTML=`${all?`<div class="bigcheck">${CHECK}</div>`:""}
+    <span class="eyebrow">${D.label} session</span>
+    <h2 class="h1">${all?head:n+" of "+tot+" done"}</h2>
+    <p class="lede">${all?msg:"Scroll back up to anything you skipped, or finish the rest later."}</p>
+    <div class="stats four"><div class="stat"><b>${streak()}</b><span>day streak (AM + PM)</span></div><div class="stat"><b>${weekGear()}/3</b><span>ball + band this week</span></div><div class="stat"><b>${doneCount(today,"am")}/${DECKS.am.cards.length}</b><span>morning today</span></div><div class="stat"><b>${doneCount(today,"pm")}/${DECKS.pm.cards.length}</b><span>evening today</span></div></div>
+    <div class="ctas">${others.map((k,i)=>`<button class="cta${i?" ghost":""}" data-act="deck" data-deck="${k}">Open ${DECKS[k].label}</button>`).join("")}<button class="cta ghost" data-act="log">See your log</button></div>
+    <p class="note">Strength work should feel like effort, never sharp pain. If heel pain is worst on your first steps for weeks, or a shin hurts in one sharp spot, get a physio to look at it.</p>`;
+}
+
+function render(deck, jump){
+  stopTimer(); cur=deck;
+  try{localStorage.setItem(KEY+".deck",deck)}catch(e){}
+  const D=DECKS[deck], r=day(today);
+  feed.innerHTML=introHTML(deck)+D.cards.map((c,i)=>cardHTML(c,i,D.cards.length,r[deck].includes(c.id))).join("")+endHTML(deck);
+  paintEnd();
+  rail.innerHTML=D.cards.map((c,i)=>`<button data-i="${i}" aria-label="Go to ${c.n}"></button>`).join("");
+  document.querySelectorAll("#seg button").forEach(b=>{b.setAttribute("aria-pressed",b.dataset.deck===deck); const k=b.dataset.deck; b.innerHTML=DECKS[k].label+(complete(today,k)?`<span class="ck">✓</span>`:"")});
+  $("#pmins").textContent="~"+D.mins+" min";
+  paintProgress();
+  feed.scrollTop=0;
+  const n=doneCount(today,deck);
+  if(jump&&n>0&&n<D.cards.length) goFirstUndone(false);
+  onScroll();
+}
+function paintProgress(){
+  const D=DECKS[cur], n=doneCount(today,cur), tot=D.cards.length;
+  $("#pcount").textContent=n+"/"+tot;
+  $("#pbar").style.width=(n/tot*100)+"%";
+  const r=day(today)[cur];
+  rail.querySelectorAll("button").forEach((b,i)=>b.classList.toggle("done",r.includes(D.cards[i].id)));
+  document.querySelectorAll("#seg button").forEach(b=>{const k=b.dataset.deck; b.innerHTML=DECKS[k].label+(complete(today,k)?`<span class="ck">✓</span>`:"")});
+}
+function cards(){return [...feed.querySelectorAll(".card")]}
+function scrollToCard(el,smooth=true){if(el) feed.scrollTo({top:el.offsetTop,behavior:smooth&&!reduce?"smooth":"auto"})}
+function goFirstUndone(smooth=true){const r=day(today)[cur]; const ex=[...feed.querySelectorAll(".card.ex")]; const t=ex.find(e=>!r.includes(e.dataset.id))||feed.querySelector(".card.end"); scrollToCard(t,smooth)}
+
+let ticking=false;
+function onScroll(){
+  if(ticking)return; ticking=true;
+  requestAnimationFrame(()=>{ticking=false;
+    const y=feed.scrollTop+feed.clientHeight*.4; let active=null;
+    cards().forEach(c=>{if(c.offsetTop<=y)active=c});
+    cards().forEach(c=>c.classList.toggle("is-active",c===active));
+    const i=active&&active.classList.contains("ex")?+active.dataset.i:-1;
+    rail.querySelectorAll("button").forEach((b,k)=>b.classList.toggle("cur",k===i));
+    rail.style.opacity=i<0?".35":"1";
+  });
+}
+feed.addEventListener("scroll",onScroll,{passive:true});
+
+function setDone(id,on,opt={}){
+  const r=day(today)[cur], el=feed.querySelector(`.card.ex[data-id="${id}"]`);
+  if(on&&!r.includes(id))r.push(id);
+  if(!on){const k=r.indexOf(id); if(k>-1)r.splice(k,1)}
+  save();
+  if(el){
+    el.classList.toggle("is-done",on);
+    const b=el.querySelector(".done"); b.setAttribute("aria-pressed",on); b.querySelector("span").textContent=on?"Done":"Mark done";
+    el.querySelectorAll(".set").forEach(s=>{s.classList.toggle("on",on); s.setAttribute("aria-pressed",on)});
+    if(on&&opt.pop){const p=el.querySelector(".pop"); p.classList.remove("go"); void p.offsetWidth; p.classList.add("go")}
+  }
+  paintProgress(); paintEnd();
+  if(on){buzz(35); beep(1046,.12);
+    if(opt.advance!==false&&el){setTimeout(()=>{if(el.classList.contains("is-done"))scrollToCard(el.nextElementSibling)},reduce?150:720)}}
+}
+
+/* timer */
+let T=null;
+function stopTimer(){if(!T)return; clearInterval(T.iv); const el=T.card; el.classList.remove("ticking"); const a=el.querySelector(".arc"); if(a)a.style.strokeDashoffset=0; const b=el.querySelector(".timer b"); if(b)b.textContent=fmt(T.c.timer.s); const sm=el.querySelector(".timer small"); if(sm)sm.textContent=T.c.timer.n>1?"x"+T.c.timer.n:"tap"; T=null}
+function labelFor(c,r){const t=c.timer; if(t.labels)return t.labels[r]; if(t.n===2)return r===0?"First side":"Second side"; return "Hold"}
+function paintTimer(){
+  const el=T.card, t=T.c.timer, total=T.phase==="hold"?t.s:5;
+  el.querySelector(".arc").style.strokeDashoffset=C*(1-T.left/total);
+  el.querySelector(".timer b").textContent=fmt(T.left);
+  el.querySelector(".timer small").textContent=T.phase==="switch"?"switch":(T.round+1)+"/"+t.n;
+  el.querySelector(".tstat").textContent=T.phase==="switch"?"Switch: "+labelFor(T.c,T.round)+" next":(T.iv?labelFor(T.c,T.round)+(t.n>1?" · "+(T.round+1)+" of "+t.n:""):"Paused. Tap the ring to resume");
+}
+function tick(){
+  T.left--;
+  if(T.left<=0){
+    if(T.phase==="hold"){
+      T.round++;
+      if(T.round>=T.c.timer.n){beep(784,.12); setTimeout(()=>beep(1046,.25),140); buzz([90,60,90]); const id=T.c.id; stopTimer(); setDone(id,true,{pop:true}); return}
+      T.phase="switch"; T.left=5; beep(880,.15); buzz(150);
+    } else {T.phase="hold"; T.left=T.c.timer.s; beep(660,.1)}
+  } else if(T.phase==="hold"&&T.left<=3){beep(520,.05)}
+  paintTimer();
+}
+function toggleTimer(el){
+  const c=DECKS[cur].cards[+el.dataset.i];
+  if(T&&T.card===el){
+    if(T.iv){clearInterval(T.iv); T.iv=null; el.classList.remove("ticking")} else {T.iv=setInterval(tick,1000); el.classList.add("ticking")}
+    paintTimer(); return;
+  }
+  stopTimer(); keepAwake(); beep(660,.1);
+  T={card:el,c,round:0,left:c.timer.s,phase:"hold",iv:setInterval(tick,1000)};
+  el.classList.add("ticking"); paintTimer();
+}
+
+/* taps */
+feed.addEventListener("click",e=>{
+  const b=e.target.closest("[data-act]"); if(!b)return;
+  const el=b.closest(".card"), act=b.dataset.act;
+  if(act==="start"){keepAwake(); goFirstUndone(); return}
+  if(act==="deck"){render(b.dataset.deck,true); return}
+  if(act==="log"){openSheet("log"); return}
+  if(act==="done"){const id=el.dataset.id; setDone(id,!el.classList.contains("is-done"),{pop:!el.classList.contains("is-done")}); return}
+  if(act==="timer"){toggleTimer(el); return}
+  if(act==="set"){
+    b.classList.toggle("on"); b.setAttribute("aria-pressed",b.classList.contains("on")); buzz(20); beep(700+ +b.dataset.k*120,.07);
+    const all=[...el.querySelectorAll(".set")].every(s=>s.classList.contains("on"));
+    const st=el.querySelector(".tstat"); const n=el.querySelectorAll(".set.on").length, tot=el.querySelectorAll(".set").length;
+    if(all&&!el.classList.contains("is-done")){setDone(el.dataset.id,true,{pop:true})}
+    else st.textContent=n?`${n} of ${tot} sets. Rest 30 to 45 s.`:"Tap each set as you finish it";
+  }
+});
+/* double tap to mark done, like a reel */
+let lastTap={t:0,x:0,y:0,el:null}, down=null;
+feed.addEventListener("pointerdown",e=>{down={x:e.clientX,y:e.clientY}});
+feed.addEventListener("pointerup",e=>{
+  if(!down||Math.hypot(e.clientX-down.x,e.clientY-down.y)>12)return;
+  if(e.target.closest("button,a"))return;
+  const el=e.target.closest(".card.ex"); if(!el)return;
+  const now=Date.now();
+  if(lastTap.el===el&&now-lastTap.t<320&&Math.hypot(e.clientX-lastTap.x,e.clientY-lastTap.y)<40){
+    const p=el.querySelector(".pop"); p.style.left="";
+    if(!el.classList.contains("is-done")) setDone(el.dataset.id,true,{pop:true}); else {p.classList.remove("go"); void p.offsetWidth; p.classList.add("go")}
+    lastTap={t:0}; return;
+  }
+  lastTap={t:now,x:e.clientX,y:e.clientY,el};
+});
+rail.addEventListener("click",e=>{const b=e.target.closest("button"); if(b)scrollToCard(feed.querySelector(`.card.ex[data-i="${b.dataset.i}"]`))});
+document.getElementById("seg").addEventListener("click",e=>{const b=e.target.closest("button"); if(b&&b.dataset.deck!==cur)render(b.dataset.deck,true)});
+
+/* keyboard: arrows move between cards on desktop */
+document.addEventListener("keydown",e=>{
+  if(!document.querySelector(".sheet.open")&&(e.key==="ArrowDown"||e.key==="ArrowUp")){
+    const cs=cards(), y=feed.scrollTop+5; let i=cs.findIndex(c=>c.offsetTop+c.offsetHeight>y);
+    i=Math.max(0,Math.min(cs.length-1,i+(e.key==="ArrowDown"?1:-1))); scrollToCard(cs[i]); e.preventDefault();
+  }
+  if(e.key==="Escape")closeSheets();
+});
+
+/* sheets */
+function libHTML(){
+  return `<div class="ph"><h2>Your reels</h2><button class="x" data-close aria-label="Close">×</button></div>
+  <p>Picked from your "Stretching Excercises" collection and all 3,192 of your saves. Tagged where each one is used. None of your saves cover yoga ball or band work, so that section runs on written steps.</p>
+  ${LIB.map(([h,name,arr])=>`<div class="grp" style="--h:var(--${h})"><h3><span class="d"></span>${name}<span>${arr.length}</span></h3><ul class="lib">${arr.map(([c,u,t])=>`<li><div style="min-width:0"><a href="${IG(c)}" target="_blank" rel="noopener">${t}</a><div class="by">@${u}</div></div>${USED[c]?`<span class="use">${USED[c]}</span>`:""}</li>`).join("")}</ul></div>`).join("")}`;
+}
+function logHTML(){
+  const d=new Date(); d.setDate(d.getDate()-27); let full=0, part=0, cells="";
+  let gearN=0;
+  for(let i=0;i<28;i++){const k=dk(d), a=complete(k,"am"), p=complete(k,"pm"), g=complete(k,"gear"); if(g)gearN++; if(a&&p)full++; else if(a||p||doneCount(k,"am")||doneCount(k,"pm"))part++;
+    cells+=`<div class="day${k===today?" today":""}">${d.getDate()}<i class="am${a?" on":""}"></i><i class="pm${p?" on":""}"></i><i class="gear${g?" on":""}"></i></div>`; d.setDate(d.getDate()+1)}
+  return `<div class="ph"><h2>Last 4 weeks</h2><button class="x" data-close aria-label="Close">×</button></div>
+  <p>A bar fills when every move in that session is done. Saved on this device only.</p>
+  <div class="stats" style="margin-bottom:14px"><div class="stat"><b>${streak()}</b><span>day streak</span></div><div class="stat"><b>${full}</b><span>full days</span></div><div class="stat"><b>${gearN}</b><span>ball + band</span></div></div>
+  <div class="cal">${cells}</div>
+  <div class="legend"><span><b style="background:var(--legs)"></b>Morning</span><span><b style="background:var(--hips)"></b>Evening</span><span><b style="background:var(--neck)"></b>Ball + Band</span></div>
+  <button class="small" id="clear-today">Clear today's ticks</button>`;
+}
+function openSheet(which){
+  closeSheets(true);
+  const s=document.getElementById("sheet-"+which);
+  document.getElementById(which+"-body").innerHTML=which==="lib"?libHTML():logHTML();
+  s.hidden=false; requestAnimationFrame(()=>requestAnimationFrame(()=>s.classList.add("open")));
+  const x=s.querySelector("[data-close]"); x&&x.focus();
+  const ct=document.getElementById("clear-today"); if(ct)ct.onclick=()=>{store.days[today]={am:[],pm:[],gear:[]}; save(); closeSheets(); render(cur,false)};
+}
+function closeSheets(instant){document.querySelectorAll(".sheet").forEach(s=>{if(s.hidden)return; s.classList.remove("open"); if(instant||reduce)s.hidden=true; else setTimeout(()=>{if(!s.classList.contains("open"))s.hidden=true},260)})}
+document.querySelectorAll(".sheet").forEach(s=>s.addEventListener("click",e=>{if(e.target===s||e.target.closest("[data-close]"))closeSheets()}));
+$("#open-lib").onclick=()=>openSheet("lib");
+$("#open-log").onclick=()=>openSheet("log");
+
+/* start: hash, then last used, then time of day */
+let start=(location.hash||"").slice(1);
+if(!DECKS[start]){const h=new Date().getHours(); start=(h<15&&!complete(today,"am"))?"am":"pm"}
+render(start,true);
+/* app: offline support, home-screen shortcuts */
+if("serviceWorker" in navigator){window.addEventListener("load",()=>{navigator.serviceWorker.register("sw.js").catch(()=>{})})}
+window.addEventListener("hashchange",()=>{const k=(location.hash||"").slice(1); if(DECKS[k]&&k!==cur)render(k,true)});
+document.addEventListener("visibilitychange",()=>{if(document.visibilityState==="visible"&&dk(new Date())!==today)location.reload()});
+</script>
+</body>
+</html>
