@@ -1,5 +1,5 @@
 /* Daily Reset service worker: app shell cache-first, fonts cached on first use */
-const VERSION = "daily-reset-v1";
+const VERSION = "daily-reset-v2";
 const SHELL = ["./", "index.html", "manifest.webmanifest", "icon-192.png", "icon-512.png", "apple-touch-icon.png"];
 
 self.addEventListener("install", e => {

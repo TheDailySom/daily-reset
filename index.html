@@ -18,7 +18,7 @@
 <style>
 /* Layout: phone-first vertical feed. One full-screen card per exercise, snap scrolling like reels, card tint = body area. */
 :root{
-  --bg:#0c0d16; --bg2:#161827; --fg:#f2f1f8; --muted:#a4a6bf; --line:#2a2d44; --chip:rgba(255,255,255,.08); --scrim:rgba(5,6,12,.62); --on-hue:#0c0d16;
+  --bg:#0c0d16; --bg2:#161827; --fg:#f2f1f8; --muted:#a4a6bf; --line:#2a2d44; --chip:rgba(255,255,255,.08); --scrim:rgba(5,6,12,.62); --on-hue:#0c0d16; --bigop:.22;
   --neck:#a493ff; --upback:#5cb4ff; --lowback:#ff8466; --hips:#ff6bb0; --legs:#ffbb4d; --feet:#7ddc95;
   --f-display:"Anybody", "Arial Narrow", system-ui, sans-serif;
   --f-body:"Figtree", "Segoe UI", system-ui, sans-serif;
@@ -26,10 +26,10 @@
   color-scheme:dark;
 }
 @media (prefers-color-scheme: light){:root:not([data-theme="dark"]){
-  --bg:#f4f3fa; --bg2:#ffffff; --fg:#17182b; --muted:#5e6079; --line:#d9d8e6; --chip:rgba(23,24,43,.06); --scrim:rgba(23,24,43,.35); --on-hue:#ffffff;
+  --bg:#f4f3fa; --bg2:#ffffff; --fg:#17182b; --muted:#5e6079; --line:#d9d8e6; --chip:rgba(23,24,43,.06); --scrim:rgba(23,24,43,.35); --on-hue:#ffffff; --bigop:.12;
   --neck:#5a47d9; --upback:#1767c7; --lowback:#c9472a; --hips:#bc2d70; --legs:#a06300; --feet:#22804a; color-scheme:light}}
 :root[data-theme="light"]{
-  --bg:#f4f3fa; --bg2:#ffffff; --fg:#17182b; --muted:#5e6079; --line:#d9d8e6; --chip:rgba(23,24,43,.06); --scrim:rgba(23,24,43,.35); --on-hue:#ffffff;
+  --bg:#f4f3fa; --bg2:#ffffff; --fg:#17182b; --muted:#5e6079; --line:#d9d8e6; --chip:rgba(23,24,43,.06); --scrim:rgba(23,24,43,.35); --on-hue:#ffffff; --bigop:.12;
   --neck:#5a47d9; --upback:#1767c7; --lowback:#c9472a; --hips:#bc2d70; --legs:#a06300; --feet:#22804a; color-scheme:light}
 
 *{box-sizing:border-box}
@@ -63,12 +63,15 @@ button:focus-visible,a:focus-visible{outline:2px solid var(--fg);outline-offset:
 /* feed */
 #feed{height:100%;overflow-y:auto;scroll-snap-type:y mandatory;overscroll-behavior:contain;scrollbar-width:none}
 #feed::-webkit-scrollbar{display:none}
-.card{position:relative;min-height:100%;scroll-snap-align:start;scroll-snap-stop:always;display:flex;flex-direction:column;justify-content:flex-end;overflow:hidden;touch-action:manipulation;
+.card{position:relative;min-height:100%;scroll-snap-align:start;scroll-snap-stop:always;display:flex;flex-direction:column;overflow:hidden;touch-action:manipulation;padding-top:152px;
   background:var(--bg);
   background:radial-gradient(110% 60% at 90% 8%,color-mix(in oklab,var(--h) 40%,transparent),transparent 62%),linear-gradient(180deg,color-mix(in oklab,var(--h) 14%,var(--bg)),var(--bg) 78%)}
-.big{position:absolute;top:146px;left:14px;right:34px;margin:0;font:900 clamp(70px,23vw,132px)/.84 var(--f-display);font-variation-settings:"wdth" 150;letter-spacing:-.02em;white-space:pre-line;color:color-mix(in oklab,var(--h) 24%,transparent);user-select:none;pointer-events:none;transition:transform .7s cubic-bezier(.2,.8,.2,1)}
-.card.is-active .big{transform:translateY(-10px)}
-.in{position:relative;z-index:1;padding:150px 44px 22px 18px;display:flex;flex-direction:column;gap:14px}
+.bigwrap{flex:1 1 0;min-height:0;position:relative;overflow:hidden;container-type:size;display:flex;align-items:flex-end;padding:0 34px 10px 16px;pointer-events:none}
+.big{margin:0;font:900 clamp(40px,20vw,120px)/.86 var(--f-display);font-size:min(calc(96cqw / (var(--w) * .82)),calc(92cqh / (var(--n) * .9)),170px);font-variation-settings:"wdth" 150;letter-spacing:-.02em;white-space:pre-line;color:var(--h);opacity:var(--bigop);user-select:none;transition:transform .7s cubic-bezier(.2,.8,.2,1)}
+@container (max-height:46px){.big{display:none}}
+.card.is-active .big{transform:translateY(-6px)}
+.in{position:relative;z-index:1;padding:0 44px 22px 18px;display:flex;flex-direction:column;gap:14px}
+.colA,.colB{display:flex;flex-direction:column;gap:14px;min-width:0}
 .kick{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
 .chip{font:600 12px/1 var(--f-mono);padding:6px 9px;border-radius:999px;background:var(--chip);border:1px solid var(--line);color:var(--fg);display:inline-flex;align-items:center;gap:6px;font-variant-numeric:tabular-nums}
 .chip .d{width:8px;height:8px;border-radius:50%;background:var(--h)}
@@ -78,7 +81,7 @@ button:focus-visible,a:focus-visible{outline:2px solid var(--fg);outline-offset:
 .chip.donechip{background:var(--h);color:var(--on-hue);border-color:transparent;display:none}
 .card.is-done .chip.donechip{display:inline-flex}
 .name{margin:0;font:800 clamp(30px,8.6vw,42px)/1.02 var(--f-display);font-variation-settings:"wdth" 108;text-wrap:balance;letter-spacing:-.005em}
-.dose{align-self:flex-start;font:600 15px var(--f-mono);color:var(--h);background:color-mix(in oklab,var(--h) 16%,transparent);border:1px solid color-mix(in oklab,var(--h) 40%,transparent);padding:6px 10px;border-radius:8px}
+.dose{align-self:flex-start;font:600 15px var(--f-mono);color:var(--h);background:var(--chip);border:1px solid var(--line);background:color-mix(in oklab,var(--h) 16%,transparent);border:1px solid color-mix(in oklab,var(--h) 40%,transparent);padding:6px 10px;border-radius:8px}
 .how{list-style:none;margin:0;padding:0;display:grid;gap:9px;counter-reset:s}
 .how li{display:grid;grid-template-columns:24px 1fr;gap:10px;counter-increment:s;font-size:16px;line-height:1.4}
 .how li::before{content:counter(s);width:24px;height:24px;border-radius:50%;border:1.5px solid var(--h);color:var(--h);font:600 12px/21px var(--f-mono);text-align:center}
@@ -102,7 +105,7 @@ button:focus-visible,a:focus-visible{outline:2px solid var(--fg);outline-offset:
 .card.ticking .timer{animation:pulse 1s ease-in-out infinite}
 @keyframes pulse{50%{transform:scale(1.04)}}
 .sets{display:flex;gap:6px}
-.set{width:44px;height:56px;border-radius:12px;border:1.5px dashed color-mix(in oklab,var(--h) 60%,transparent);background:none;font:600 15px var(--f-mono);display:grid;place-items:center;transition:background .2s,color .2s,transform .12s}
+.set{width:44px;height:56px;border-radius:12px;border:1.5px dashed var(--line);border:1.5px dashed color-mix(in oklab,var(--h) 60%,transparent);background:none;font:600 15px var(--f-mono);display:grid;place-items:center;transition:background .2s,color .2s,transform .12s}
 .set small{display:block;font-size:9px;color:var(--muted);letter-spacing:.06em}
 .set.on{background:color-mix(in oklab,var(--h) 30%,transparent);border-style:solid}
 .set:active{transform:scale(.94)}
@@ -129,6 +132,7 @@ button:focus-visible,a:focus-visible{outline:2px solid var(--fg);outline-offset:
 .cta.ghost{background:var(--chip);color:var(--fg);border:1px solid var(--line)}
 .ctas{display:grid;gap:10px}
 .hint{display:flex;flex-direction:column;align-items:center;gap:2px;color:var(--muted);font:600 12px var(--f-mono);text-transform:uppercase;letter-spacing:.1em}
+.hint .k{display:none}
 .hint svg{width:22px;height:22px;stroke:currentColor;fill:none;stroke-width:2.2;animation:bob 1.6s ease-in-out infinite}
 @keyframes bob{50%{transform:translateY(-6px)}}
 .stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
@@ -176,11 +180,49 @@ button:focus-visible,a:focus-visible{outline:2px solid var(--fg);outline-offset:
 .legend b{display:inline-block;width:14px;height:5px;border-radius:3px;margin-right:6px;vertical-align:middle}
 .small{border:1px solid var(--line);background:var(--chip);border-radius:10px;padding:8px 12px;font-weight:600;font-size:13px;margin-top:16px}
 
+/* laptop and desktop: sidebar with the session list, wide two-column cards */
+.list,.keys{display:none}
+@media (min-width:1000px){
+  .app{max-width:none;display:grid;grid-template-columns:320px minmax(0,1fr);grid-template-rows:100%;border:0}
+  .top{position:relative;inset:auto;grid-column:1;grid-row:1;height:100%;overflow-y:auto;background:var(--bg2);border-right:1px solid var(--line);padding:24px 20px 20px;display:flex;flex-direction:column;pointer-events:auto}
+  .brand{font-size:15px;white-space:nowrap}
+  .ibtn{padding:6px 10px;font-size:12px}
+  .seg{grid-template-columns:1fr;margin-top:20px}
+  .seg button{justify-content:flex-start;padding:9px 14px;font-size:15px}
+  .prog{margin-top:16px}
+  #feed{grid-column:2;grid-row:1}
+  .rail{display:none}
+  .list{display:flex;flex-direction:column;gap:2px;margin-top:14px}
+  .list button{display:grid;grid-template-columns:24px minmax(0,1fr) 16px;gap:8px;align-items:center;text-align:left;border:0;background:none;border-radius:10px;padding:8px 10px;font-size:14px;line-height:1.3;color:var(--muted);transition:background .15s,color .15s}
+  .list button:hover{background:var(--chip);color:var(--fg)}
+  .list button.cur{background:var(--chip);color:var(--fg);box-shadow:inset 3px 0 0 var(--h)}
+  .list .n{font:600 11px var(--f-mono);color:var(--h)}
+  .list .ck2{color:var(--feet);font-size:13px;opacity:0}
+  .list button.done .ck2{opacity:1}
+  .list button.done .nm{text-decoration:line-through;text-decoration-color:var(--muted)}
+  .keys{display:block;margin:auto 0 0;padding-top:18px;font:500 12px/1.9 var(--f-mono);color:var(--muted)}
+  .keys kbd{font:600 11px var(--f-mono);border:1px solid var(--line);border-bottom-width:2px;border-radius:5px;padding:1px 6px;color:var(--fg);margin-right:4px}
+  .card{padding-top:36px}
+  .bigwrap{padding:0 56px 14px}
+  .big{font-size:min(calc(96cqw / (var(--w) * .82)),calc(92cqh / (var(--n) * .9)),128px)}
+  .in{width:100%;max-width:1180px;margin:0 auto;padding:0 56px 44px}
+  .ex .in{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,.9fr);column-gap:48px;align-items:start}
+  .ex .name{font-size:clamp(38px,4vw,60px)}
+  .ex .how li{font-size:17px}
+  .colB{background:var(--chip);border:1px solid var(--line);border-radius:20px;padding:22px}
+  .intro .in > *,.end .in > *{max-width:720px}
+  .ctas{display:flex;flex-wrap:wrap}
+  .cta{padding:0 28px}
+  .stats.four{grid-template-columns:repeat(4,1fr)}
+  .hint{align-items:flex-start}
+  .hint .k{display:inline}
+  .hint .m,.hint svg{display:none}
+}
 @media (prefers-reduced-motion: reduce){
   *{animation:none!important;transition:none!important}
   .pop.go{opacity:1}
 }
-@media (max-height:700px){.in{gap:11px;padding-top:140px}.how li{font-size:15px}.cues{font-size:13px}.big{top:118px}}
+@media (max-height:700px){.in,.colA,.colB{gap:11px}.how li{font-size:15px}.cues{font-size:13px}}
 </style>
 </head>
 <body>
@@ -197,6 +239,8 @@ button:focus-visible,a:focus-visible{outline:2px solid var(--fg);outline-offset:
       <button data-deck="gear" aria-pressed="false">Ball + Band</button>
     </div>
     <div class="prog"><span id="pcount">0/0</span><span class="bar"><i id="pbar"></i></span><span id="pmins"></span></div>
+    <nav class="list" id="list" aria-label="Moves in this session"></nav>
+    <p class="keys"><kbd>↑</kbd><kbd>↓</kbd> previous or next move<br><kbd>D</kbd> mark done<br><kbd>T</kbd> start or pause timer</p>
   </div>
   <main id="feed" aria-live="off"></main>
   <nav class="rail" id="rail" aria-label="Exercises"></nav>
@@ -413,18 +457,19 @@ function streak(){const d=new Date(); if(!(complete(dk(d),"am")&&complete(dk(d),
 
 /* helpers */
 const $=s=>document.querySelector(s);
-const feed=$("#feed"), rail=$("#rail");
+const feed=$("#feed"), rail=$("#rail"), list=$("#list");
 const C=169.65;
 const fmt=s=>s>=60?Math.floor(s/60)+":"+String(s%60).padStart(2,"0"):"0:"+String(s).padStart(2,"0");
 const reduce=matchMedia("(prefers-reduced-motion: reduce)").matches;
 const CHECK='<svg viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5" stroke-linecap="round" stroke-linejoin="round"/></svg>';
 let ac=null;
-function beep(f,d){try{ac=ac||new (window.AudioContext||window.webkitAudioContext)(); const o=ac.createOscillator(),g=ac.createGain(); o.type="sine"; o.frequency.value=f; o.connect(g); g.connect(ac.destination); const t=ac.currentTime; g.gain.setValueAtTime(.0001,t); g.gain.exponentialRampToValueAtTime(.22,t+.02); g.gain.exponentialRampToValueAtTime(.0001,t+d); o.start(t); o.stop(t+d+.03)}catch(e){}}
+function beep(f,d){try{ac=ac||new (window.AudioContext||window.webkitAudioContext)(); if(ac.state==="suspended")ac.resume(); const o=ac.createOscillator(),g=ac.createGain(); o.type="sine"; o.frequency.value=f; o.connect(g); g.connect(ac.destination); const t=ac.currentTime; g.gain.setValueAtTime(.0001,t); g.gain.exponentialRampToValueAtTime(.22,t+.02); g.gain.exponentialRampToValueAtTime(.0001,t+d); o.start(t); o.stop(t+d+.03)}catch(e){}}
 function buzz(p){try{navigator.vibrate&&navigator.vibrate(p)}catch(e){}}
 let wl=null; async function keepAwake(){try{if("wakeLock" in navigator&&!wl){wl=await navigator.wakeLock.request("screen"); wl.addEventListener("release",()=>wl=null)}}catch(e){}}
 
 let cur="am";
 
+function bigHTML(w){const ls=w.split("\n"); return `<div class="bigwrap" aria-hidden="true"><p class="big" style="--n:${ls.length};--w:${Math.max(...ls.map(l=>l.length))}">${w}</p></div>`}
 function hues(deck){return [...new Set(DECKS[deck].cards.map(c=>c.area))]}
 
 function introHTML(deck){
@@ -433,15 +478,15 @@ function introHTML(deck){
   const bg=hs.map((h,i)=>`radial-gradient(45% 30% at ${pos[i][0]}% ${pos[i][1]}%, color-mix(in oklab, var(--${h}) 42%, transparent), transparent 70%)`).join(",");
   const n=doneCount(today,deck), tot=D.cards.length;
   return `<section class="card intro" style="--h:var(--fg);background:${bg},var(--bg)">
-    <p class="big" aria-hidden="true">${D.word}</p>
+    ${bigHTML(D.word)}
     <div class="in">
       <span class="eyebrow">${D.label} · ${tot} moves · about ${D.mins} min${D.freq?" · "+D.freq:""}</span>
       <h1 class="h1">${D.title}</h1>
       <p class="lede">${D.intent}</p>
       ${D.tip?`<p class="tip">${D.tip}</p>`:""}
       <div class="areas">${hs.map(h=>`<span class="chip" style="--h:var(--${h})"><span class="d"></span>${AREAS[h]}</span>`).join("")}</div>
-      <div class="ctas"><button class="cta" data-act="start">${n===0?"Start":n>=tot?"Review today's session":"Continue from "+(n+1)} ${n>=tot?"":"<svg viewBox='0 0 24 24' width='20' height='20' fill='none' stroke='currentColor' stroke-width='2.4'><path d='M12 5v14M6 13l6 6 6-6'/></svg>"}</button></div>
-      <div class="hint" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M6 15l6-6 6 6"/></svg>Swipe up</div>
+      <div class="ctas"><button class="cta" data-act="start">${n===0?"Start":n>=tot?"Review today's session":"Continue from move "+(n+1)} ${n>=tot?"":"<svg viewBox='0 0 24 24' width='20' height='20' fill='none' stroke='currentColor' stroke-width='2.4'><path d='M12 5v14M6 13l6 6 6-6'/></svg>"}</button></div>
+      <div class="hint" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M6 15l6-6 6 6"/></svg><span class="m">Swipe up</span><span class="k">Scroll, or press the down arrow</span></div>
     </div></section>`;
 }
 
@@ -451,24 +496,25 @@ function cardHTML(c,i,tot,isDone){
   if(c.timer){ctrl=`<button class="timer" data-act="timer" aria-label="Start timer, ${c.timer.s} seconds${c.timer.n>1?", "+c.timer.n+" rounds":""}"><svg viewBox="0 0 64 64" aria-hidden="true"><circle class="trk" cx="32" cy="32" r="27"/><circle class="arc" cx="32" cy="32" r="27"/></svg><span class="tt"><b>${fmt(c.timer.s)}</b><small>${c.timer.n>1?"x"+c.timer.n:"tap"}</small></span></button>`}
   else if(c.sets){ctrl=`<div class="sets" role="group" aria-label="Tap each set as you finish it">${Array.from({length:c.sets},(_,k)=>`<button class="set${isDone?" on":""}" data-act="set" data-k="${k}" aria-pressed="${isDone}"><span>${k+1}<small>SET</small></span></button>`).join("")}</div>`}
   return `<article class="card ex${isDone?" is-done":""}" data-id="${c.id}" data-i="${i}" style="--h:var(--${c.area})">
-    <p class="big" aria-hidden="true">${BIG[c.area]}</p>
-    <div class="in">
+    ${bigHTML(BIG[c.area])}
+    <div class="in"><div class="colA">
       <div class="kick"><span class="chip">${String(i+1).padStart(2,"0")} / ${String(tot).padStart(2,"0")}</span><span class="chip"><span class="d"></span>${AREAS[c.area]}</span><span class="chip">${TYPES[c.type]}</span>${(c.gear||[]).map(g=>`<span class="chip gear">${g}</span>`).join("")}<span class="chip donechip">${CHECK.replace('<svg','<svg width="12" height="12" stroke="currentColor" stroke-width="3" fill="none"')}Done</span></div>
       <h2 class="name">${c.n}</h2>
       <span class="dose">${c.dose}</span>
       <ol class="how">${c.steps.map(s=>`<li>${s}</li>`).join("")}</ol>
+      </div><div class="colB">
       <dl class="cues"><div><dt>Feel</dt><dd>${c.feel}</dd></div><div><dt>Avoid</dt><dd>${c.avoid}</dd></div>${c.harder?`<div><dt>Harder</dt><dd>${c.harder}</dd></div>`:""}</dl>
       <div class="act">${ctrl}<button class="done" data-act="done" aria-pressed="${isDone}">${CHECK}<span>${isDone?"Done":"Mark done"}</span></button></div>
       <div class="tstat" aria-live="polite">${c.timer?"Tap the ring to start the timer":c.sets?"Tap each set as you finish it":""}</div>
       <div class="src">${src?`<a class="reel" href="${IG(c.reel)}" target="_blank" rel="noopener"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>Watch @${src.u}</a>`:`<span class="noreel">No exact reel in your saves. Follow the steps above.</span>`}${c.rel?`<a class="alt" href="${IG(c.rel)}" target="_blank" rel="noopener">Related: @${REEL[c.rel].u}</a>`:""}${(c.alt||[]).map(a=>`<a class="alt" href="${IG(a)}" target="_blank" rel="noopener">Swap: @${REEL[a].u}</a>`).join("")}</div>
-    </div>
+    </div></div>
     <div class="pop" aria-hidden="true"><svg viewBox="0 0 120 120"><circle cx="60" cy="60" r="56" fill="var(--h)"/><path d="M36 62l16 16 32-34" fill="none" stroke="var(--on-hue)" stroke-width="10" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
   </article>`;
 }
 
 function endHTML(deck){
   const w={am:"GOOD\nSTART",pm:"DONE\nTODAY",gear:"STRONG"}[deck];
-  return `<section class="card end" style="--h:var(--feet)"><p class="big" aria-hidden="true">${w}</p><div class="in" id="end-in"></div></section>`;
+  return `<section class="card end" style="--h:var(--feet)">${bigHTML(w)}<div class="in" id="end-in"></div></section>`;
 }
 function weekGear(){let n=0; const d=new Date(); for(let i=0;i<7;i++){if(complete(dk(d),"gear"))n++; d.setDate(d.getDate()-1)} return n}
 function paintEnd(){
@@ -477,6 +523,8 @@ function paintEnd(){
   const others=Object.keys(DECKS).filter(k=>k!==cur);
   const head={am:"Morning done",pm:"Evening done",gear:"Ball + Band done"}[cur];
   const msg={am:"Glutes and back are switched on. The evening session builds strength and lets it all go.",pm:"That's both halves of the day if you did the morning too. Same again tomorrow.",gear:"Extra strength banked. Aim for 3 of these a week."}[cur];
+  const bw=all?{am:"GOOD\nSTART",pm:"DONE\nTODAY",gear:"STRONG"}[cur]:"KEEP\nGOING", big=el.parentNode.querySelector(".big");
+  if(big){const ls=bw.split("\n"); big.textContent=bw; big.style.setProperty("--n",ls.length); big.style.setProperty("--w",Math.max(...ls.map(l=>l.length)))}
   el.innerHTML=`${all?`<div class="bigcheck">${CHECK}</div>`:""}
     <span class="eyebrow">${D.label} session</span>
     <h2 class="h1">${all?head:n+" of "+tot+" done"}</h2>
@@ -488,11 +536,12 @@ function paintEnd(){
 
 function render(deck, jump){
   stopTimer(); cur=deck;
-  try{localStorage.setItem(KEY+".deck",deck)}catch(e){}
+  try{history.replaceState(null,"","#"+deck)}catch(e){}
   const D=DECKS[deck], r=day(today);
   feed.innerHTML=introHTML(deck)+D.cards.map((c,i)=>cardHTML(c,i,D.cards.length,r[deck].includes(c.id))).join("")+endHTML(deck);
   paintEnd();
   rail.innerHTML=D.cards.map((c,i)=>`<button data-i="${i}" aria-label="Go to ${c.n}"></button>`).join("");
+  list.innerHTML=D.cards.map((c,i)=>`<button data-i="${i}" style="--h:var(--${c.area})"><span class="n">${String(i+1).padStart(2,"0")}</span><span class="nm">${c.n}</span><span class="ck2" aria-hidden="true">✓</span></button>`).join("");
   document.querySelectorAll("#seg button").forEach(b=>{b.setAttribute("aria-pressed",b.dataset.deck===deck); const k=b.dataset.deck; b.innerHTML=DECKS[k].label+(complete(today,k)?`<span class="ck">✓</span>`:"")});
   $("#pmins").textContent="~"+D.mins+" min";
   paintProgress();
@@ -507,6 +556,7 @@ function paintProgress(){
   $("#pbar").style.width=(n/tot*100)+"%";
   const r=day(today)[cur];
   rail.querySelectorAll("button").forEach((b,i)=>b.classList.toggle("done",r.includes(D.cards[i].id)));
+  list.querySelectorAll("button").forEach((b,i)=>b.classList.toggle("done",r.includes(D.cards[i].id)));
   document.querySelectorAll("#seg button").forEach(b=>{const k=b.dataset.deck; b.innerHTML=DECKS[k].label+(complete(today,k)?`<span class="ck">✓</span>`:"")});
 }
 function cards(){return [...feed.querySelectorAll(".card")]}
@@ -523,6 +573,7 @@ function onScroll(){
     const i=active&&active.classList.contains("ex")?+active.dataset.i:-1;
     rail.querySelectorAll("button").forEach((b,k)=>b.classList.toggle("cur",k===i));
     rail.style.opacity=i<0?".35":"1";
+    list.querySelectorAll("button").forEach((b,k)=>{b.classList.toggle("cur",k===i); if(k===i&&list.offsetParent)b.scrollIntoView({block:"nearest"})});
   });
 }
 feed.addEventListener("scroll",onScroll,{passive:true});
@@ -545,7 +596,7 @@ function setDone(id,on,opt={}){
 
 /* timer */
 let T=null;
-function stopTimer(){if(!T)return; clearInterval(T.iv); const el=T.card; el.classList.remove("ticking"); const a=el.querySelector(".arc"); if(a)a.style.strokeDashoffset=0; const b=el.querySelector(".timer b"); if(b)b.textContent=fmt(T.c.timer.s); const sm=el.querySelector(".timer small"); if(sm)sm.textContent=T.c.timer.n>1?"x"+T.c.timer.n:"tap"; T=null}
+function stopTimer(msg){if(!T)return; clearInterval(T.iv); const el=T.card; el.classList.remove("ticking"); const ts=el.querySelector(".tstat"); if(ts)ts.textContent=msg||"Tap the ring to start the timer"; const a=el.querySelector(".arc"); if(a)a.style.strokeDashoffset=0; const b=el.querySelector(".timer b"); if(b)b.textContent=fmt(T.c.timer.s); const sm=el.querySelector(".timer small"); if(sm)sm.textContent=T.c.timer.n>1?"x"+T.c.timer.n:"tap"; T=null}
 function labelFor(c,r){const t=c.timer; if(t.labels)return t.labels[r]; if(t.n===2)return r===0?"First side":"Second side"; return "Hold"}
 function paintTimer(){
   const el=T.card, t=T.c.timer, total=T.phase==="hold"?t.s:5;
@@ -559,7 +610,7 @@ function tick(){
   if(T.left<=0){
     if(T.phase==="hold"){
       T.round++;
-      if(T.round>=T.c.timer.n){beep(784,.12); setTimeout(()=>beep(1046,.25),140); buzz([90,60,90]); const id=T.c.id; stopTimer(); setDone(id,true,{pop:true}); return}
+      if(T.round>=T.c.timer.n){beep(784,.12); setTimeout(()=>beep(1046,.25),140); buzz([90,60,90]); const id=T.c.id; stopTimer("Timer finished. Nice work."); setDone(id,true,{pop:true}); return}
       T.phase="switch"; T.left=5; beep(880,.15); buzz(150);
     } else {T.phase="hold"; T.left=T.c.timer.s; beep(660,.1)}
   } else if(T.phase==="hold"&&T.left<=3){beep(520,.05)}
@@ -580,7 +631,7 @@ function toggleTimer(el){
 feed.addEventListener("click",e=>{
   const b=e.target.closest("[data-act]"); if(!b)return;
   const el=b.closest(".card"), act=b.dataset.act;
-  if(act==="start"){keepAwake(); goFirstUndone(); return}
+  if(act==="start"){keepAwake(); if(complete(today,cur))scrollToCard(feed.querySelector(".card.ex")); else goFirstUndone(); return}
   if(act==="deck"){render(b.dataset.deck,true); return}
   if(act==="log"){openSheet("log"); return}
   if(act==="done"){const id=el.dataset.id; setDone(id,!el.classList.contains("is-done"),{pop:!el.classList.contains("is-done")}); return}
@@ -609,11 +660,17 @@ feed.addEventListener("pointerup",e=>{
   lastTap={t:now,x:e.clientX,y:e.clientY,el};
 });
 rail.addEventListener("click",e=>{const b=e.target.closest("button"); if(b)scrollToCard(feed.querySelector(`.card.ex[data-i="${b.dataset.i}"]`))});
+list.addEventListener("click",e=>{const b=e.target.closest("button"); if(b)scrollToCard(feed.querySelector(`.card.ex[data-i="${b.dataset.i}"]`))});
 document.getElementById("seg").addEventListener("click",e=>{const b=e.target.closest("button"); if(b&&b.dataset.deck!==cur)render(b.dataset.deck,true)});
 
 /* keyboard: arrows move between cards on desktop */
+function activeCard(){return feed.querySelector(".card.is-active")}
 document.addEventListener("keydown",e=>{
-  if(!document.querySelector(".sheet.open")&&(e.key==="ArrowDown"||e.key==="ArrowUp")){
+  if(e.metaKey||e.ctrlKey||e.altKey)return;
+  const open=document.querySelector(".sheet.open");
+  if(!open&&(e.key==="d"||e.key==="D")){const el=activeCard(); if(el&&el.classList.contains("ex")){setDone(el.dataset.id,!el.classList.contains("is-done"),{pop:!el.classList.contains("is-done")})} return}
+  if(!open&&(e.key==="t"||e.key==="T")){const el=activeCard(); if(el&&el.querySelector(".timer"))toggleTimer(el); return}
+  if(!open&&(e.key==="ArrowDown"||e.key==="ArrowUp")){
     const cs=cards(), y=feed.scrollTop+5; let i=cs.findIndex(c=>c.offsetTop+c.offsetHeight>y);
     i=Math.max(0,Math.min(cs.length-1,i+(e.key==="ArrowDown"?1:-1))); scrollToCard(cs[i]); e.preventDefault();
   }
